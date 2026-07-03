@@ -77,17 +77,17 @@ function HistoryTimeline() {
           <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-brand-orange via-brand-red to-transparent -translate-x-[1px]" />
 
           {/* Timeline Items */}
-          <div className="space-y-24">
+          <div className="space-y-20 md:space-y-28">
             {MILESTONES.map((m, idx) => {
               const isEven = idx % 2 === 0
               return (
-                <div key={m.year} className="relative flex flex-col md:flex-row items-center justify-between">
+                <div key={m.year} className="relative flex flex-col md:flex-row items-stretch md:items-center justify-between">
                   
                   {/* Timeline Node Dot */}
                   <div className="absolute left-4 md:left-1/2 w-4 h-4 rounded-full bg-brand-orange border-4 border-white shadow-md -translate-x-[7px] z-10 hover:scale-125 transition-transform duration-300" />
 
-                  {/* Left Side Container */}
-                  <div className="w-full md:w-1/2 pl-12 md:pl-0 md:pr-16 text-left md:text-right">
+                  {/* Left Side Container (Desktop only) */}
+                  <div className="hidden md:block w-1/2 pr-16 text-right">
                     {isEven ? (
                       <div className="space-y-3 group hover:translate-y-[-2px] transition-transform duration-300">
                         <span className="font-serif text-2xl font-extrabold text-brand-orange">
@@ -96,13 +96,13 @@ function HistoryTimeline() {
                         <h3 className="text-xl font-bold text-brand-charcoal">
                           {m.title}
                         </h3>
-                        <p className="text-brand-grey text-sm leading-relaxed max-w-lg md:ml-auto">
+                        <p className="text-brand-grey text-sm leading-relaxed max-w-lg ml-auto">
                           {m.desc}
                         </p>
                       </div>
                     ) : (
                       // Huge decorative Year on the opposite side to balance the space
-                      <div className="hidden md:flex justify-end select-none">
+                      <div className="flex justify-end select-none">
                         <span className="font-serif text-8xl lg:text-9xl font-black text-brand-orange/5 tracking-tighter">
                           {m.year}
                         </span>
@@ -110,8 +110,8 @@ function HistoryTimeline() {
                     )}
                   </div>
 
-                  {/* Right Side Container */}
-                  <div className="w-full md:w-1/2 pl-12 md:pl-16 text-left">
+                  {/* Right Side Container (Desktop only) */}
+                  <div className="hidden md:block w-1/2 pl-16 text-left">
                     {!isEven ? (
                       <div className="space-y-3 group hover:translate-y-[-2px] transition-transform duration-300">
                         <span className="font-serif text-2xl font-extrabold text-brand-orange">
@@ -126,12 +126,25 @@ function HistoryTimeline() {
                       </div>
                     ) : (
                       // Huge decorative Year on the opposite side to balance the space
-                      <div className="hidden md:flex justify-start select-none">
+                      <div className="flex justify-start select-none">
                         <span className="font-serif text-8xl lg:text-9xl font-black text-brand-orange/5 tracking-tighter">
                           {m.year}
                         </span>
                       </div>
                     )}
+                  </div>
+
+                  {/* Mobile-only Layout Container */}
+                  <div className="md:hidden w-full pl-12 text-left space-y-2 pb-8">
+                    <span className="font-serif text-2xl font-extrabold text-brand-orange block">
+                      {m.year}
+                    </span>
+                    <h3 className="text-lg font-bold text-brand-charcoal">
+                      {m.title}
+                    </h3>
+                    <p className="text-brand-grey text-xs leading-relaxed">
+                      {m.desc}
+                    </p>
                   </div>
 
                 </div>
