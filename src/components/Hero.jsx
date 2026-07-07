@@ -1,5 +1,5 @@
 import { useScroll, useTransform, motion } from 'framer-motion'
-import churchImg from '../assets/church.jpg'
+import churchImg from '../assets/church2.jpg'
 import landingBg from '../assets/landing_bg.jpg'
 import landingVideo from '../assets/64058-509542719_medium_1.mp4'
 
@@ -90,7 +90,7 @@ function Hero() {
 
         {/* Right Side: Semicircle Image on desktop, fully circular image on mobile */}
         <div className="lg:col-span-5 w-full flex justify-center md:justify-end items-stretch relative z-10 -mt-6 md:mt-0 md:px-0">
-          <div className="relative w-[260px] h-[260px] md:w-[115%] lg:w-[125%] md:h-full aspect-square md:aspect-auto mx-auto md:ml-auto">
+          <div className="relative w-[260px] h-[260px] md:w-[115%] lg:w-[125%] md:h-[88%] self-center aspect-square md:aspect-auto mx-auto md:ml-auto">
 
             {/* Hollow Gold Ring Accent Frame */}
             <div
@@ -110,7 +110,7 @@ function Hero() {
               <img
                 src={churchImg}
                 alt="Infant Mary Church"
-                className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700 ease-out"
+                className="w-full h-full object-cover object-[28%_center] transform hover:scale-105 transition-transform duration-700 ease-out"
               />
             </div>
           </div>
