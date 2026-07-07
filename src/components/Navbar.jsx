@@ -6,62 +6,78 @@ function Navbar({ currentTab, setCurrentTab }) {
   const handleNavClick = (tab) => {
     setCurrentTab(tab)
     setIsOpen(false)
+    window.location.hash = '' // Clear hash on direct tab switch
+  }
+
+  const handleAnchorClick = (e, targetHash) => {
+    if (currentTab !== 'home') {
+      e.preventDefault()
+      setCurrentTab('home')
+      window.location.hash = targetHash
+    }
+    setIsOpen(false)
   }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-brand-charcoal/5 bg-white/70 backdrop-blur-md">
-      <div className="mx-auto max-w-7xl px-6 h-20 flex items-center justify-between">
-        {/* Logo */}
+      <div className="w-full px-6 md:px-12 h-20 flex items-center justify-between">
+        {/* Left Side: Logo */}
         <button 
           onClick={() => handleNavClick('home')} 
-          className="flex items-center gap-2 group cursor-pointer text-left"
+          className="flex items-center gap-2.5 group cursor-pointer text-left"
         >
-          <span className="font-serif text-2xl font-bold tracking-tight text-brand-charcoal group-hover:text-brand-orange transition-colors">
-            Infant Mary Church
+          {/* Minimalist Cross Icon */}
+          <div className="text-brand-orange transform group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m-5-10h10" />
+            </svg>
+          </div>
+          <span className="font-sans text-lg md:text-xl font-extrabold tracking-tight text-brand-charcoal group-hover:text-brand-orange transition-colors">
+            Infant Mary Church, Katipalla
           </span>
         </button>
         
-        {/* Desktop Navigation */}
+        {/* Right Side: Desktop Navigation Links (gap expanded to 8) */}
         <nav className="hidden md:flex items-center gap-8">
           <button 
             onClick={() => handleNavClick('home')} 
-            className={`text-sm font-medium transition-colors cursor-pointer ${
-              currentTab === 'home' ? 'text-brand-orange' : 'text-brand-charcoal hover:text-brand-orange'
+            className={`relative py-1 text-sm font-medium transition-colors cursor-pointer group ${
+              currentTab === 'home' ? 'text-brand-orange' : 'text-brand-charcoal'
             }`}
           >
             Home
+            <span className={`absolute bottom-0 left-0 w-full h-[2px] bg-brand-orange transition-transform duration-300 origin-center ${
+              currentTab === 'home' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+            }`} />
           </button>
           <a 
             href="#timings" 
-            className="text-sm font-medium text-brand-grey hover:text-brand-orange transition-colors cursor-pointer"
+            onClick={(e) => handleAnchorClick(e, '#timings')}
+            className="relative py-1 text-sm font-medium text-brand-grey hover:text-brand-orange transition-colors cursor-pointer group"
           >
             Mass Timings
+            <span className="absolute bottom-0 left-0 w-full h-[2px] bg-brand-orange transition-transform duration-300 origin-center scale-x-0 group-hover:scale-x-100" />
           </a>
           <button 
             onClick={() => handleNavClick('history')} 
-            className={`text-sm font-medium transition-colors cursor-pointer ${
-              currentTab === 'history' ? 'text-brand-orange' : 'text-brand-grey hover:text-brand-orange'
+            className={`relative py-1 text-sm font-medium transition-colors cursor-pointer group ${
+              currentTab === 'history' ? 'text-brand-orange' : 'text-brand-grey'
             }`}
           >
             Our History
+            <span className={`absolute bottom-0 left-0 w-full h-[2px] bg-brand-orange transition-transform duration-300 origin-center ${
+              currentTab === 'history' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+            }`} />
           </button>
           <a 
             href="#news" 
-            className="text-sm font-medium text-brand-grey hover:text-brand-orange transition-colors cursor-pointer"
+            onClick={(e) => handleAnchorClick(e, '#news')}
+            className="relative py-1 text-sm font-medium text-brand-grey hover:text-brand-orange transition-colors cursor-pointer group"
           >
             News & Events
+            <span className="absolute bottom-0 left-0 w-full h-[2px] bg-brand-orange transition-transform duration-300 origin-center scale-x-0 group-hover:scale-x-100" />
           </a>
         </nav>
-
-        {/* Join Us (Desktop) */}
-        <div className="hidden md:flex items-center gap-4">
-          <a 
-            href="#timings" 
-            className="text-xs font-semibold uppercase tracking-wider bg-brand-charcoal hover:bg-brand-orange text-white px-5 py-2.5 rounded-full transition-all duration-300 shadow-sm cursor-pointer"
-          >
-            Join Us
-          </a>
-        </div>
 
         {/* Mobile Menu Button (Hamburger) */}
         <button 
@@ -94,7 +110,7 @@ function Navbar({ currentTab, setCurrentTab }) {
           </button>
           <a 
             href="#timings" 
-            onClick={() => setIsOpen(false)}
+            onClick={(e) => handleAnchorClick(e, '#timings')}
             className="text-left text-sm font-semibold uppercase tracking-wider text-brand-grey hover:text-brand-orange transition-colors"
           >
             Mass Timings
@@ -109,17 +125,10 @@ function Navbar({ currentTab, setCurrentTab }) {
           </button>
           <a 
             href="#news" 
-            onClick={() => setIsOpen(false)}
+            onClick={(e) => handleAnchorClick(e, '#news')}
             className="text-left text-sm font-semibold uppercase tracking-wider text-brand-grey hover:text-brand-orange transition-colors"
           >
             News & Events
-          </a>
-          <a 
-            href="#timings" 
-            onClick={() => setIsOpen(false)}
-            className="text-center text-xs font-semibold uppercase tracking-wider bg-brand-charcoal hover:bg-brand-orange text-white py-3 rounded-full transition-all duration-300 shadow-sm block"
-          >
-            Join Us
           </a>
         </div>
       )}

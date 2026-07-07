@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import beachImg from '../assets/beach.webp'
 
 const MILESTONES = [
@@ -59,22 +60,35 @@ function HistoryTimeline() {
       
       <div className="relative mx-auto max-w-7xl px-6 z-10">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-24 space-y-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="text-center max-w-2xl mx-auto mb-24 space-y-4"
+        >
           <span className="text-xs font-semibold uppercase tracking-widest text-brand-orange">
             Our Journey
           </span>
           <h2 className="font-serif text-4xl md:text-5xl font-light text-brand-charcoal">
-            The History of <span className="font-serif italic bg-gradient-to-r from-rose-500 via-[#e96b39] to-brand-red bg-clip-text text-transparent font-bold">Infant Mary Church</span>
+            The History of <span className="font-serif italic text-gold-gradient font-bold">Infant Mary Church</span>
           </h2>
           <p className="text-brand-grey text-sm md:text-base leading-relaxed">
             From a humble bamboo tent in the forest of Katipalla to a thriving parish community, explore the key milestones that shaped our spiritual home.
           </p>
-        </div>
+        </motion.div>
 
         {/* Vertical Timeline Container */}
         <div className="relative">
-          {/* Central Vertical Line */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-brand-orange via-brand-red to-transparent -translate-x-[1px]" />
+          {/* Central Vertical Line (Growing downward on viewport scroll) */}
+          <motion.div 
+            initial={{ scaleY: 0 }}
+            whileInView={{ scaleY: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.6, ease: 'easeInOut' }}
+            style={{ originY: 0 }}
+            className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-brand-orange via-brand-red to-transparent -translate-x-[1px]" 
+          />
 
           {/* Timeline Items */}
           <div className="space-y-20 md:space-y-28">
@@ -83,13 +97,25 @@ function HistoryTimeline() {
               return (
                 <div key={m.year} className="relative flex flex-col md:flex-row items-stretch md:items-center justify-between">
                   
-                  {/* Timeline Node Dot */}
-                  <div className="absolute left-4 md:left-1/2 w-4 h-4 rounded-full bg-brand-orange border-4 border-white shadow-md -translate-x-[7px] z-10 hover:scale-125 transition-transform duration-300" />
+                  {/* Timeline Node Dot (Spring scale-up animation) */}
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true, margin: '-100px' }}
+                    transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+                    className="absolute left-4 md:left-1/2 w-4 h-4 rounded-full bg-brand-orange border-4 border-white shadow-md -translate-x-[7px] z-10 hover:scale-125 transition-transform duration-300" 
+                  />
 
                   {/* Left Side Container (Desktop only) */}
                   <div className="hidden md:block w-1/2 pr-16 text-right">
                     {isEven ? (
-                      <div className="space-y-3 group hover:translate-y-[-2px] transition-transform duration-300">
+                      <motion.div 
+                        initial={{ opacity: 0, x: -40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, margin: '-100px' }}
+                        transition={{ duration: 0.7, ease: 'easeOut' }}
+                        className="space-y-3 group hover:translate-y-[-2px] transition-transform duration-300"
+                      >
                         <span className="font-serif text-2xl font-extrabold text-brand-orange">
                           {m.year}
                         </span>
@@ -99,21 +125,33 @@ function HistoryTimeline() {
                         <p className="text-brand-grey text-sm leading-relaxed max-w-lg ml-auto">
                           {m.desc}
                         </p>
-                      </div>
+                      </motion.div>
                     ) : (
-                      // Huge decorative Year on the opposite side to balance the space
-                      <div className="flex justify-end select-none">
-                        <span className="font-serif text-8xl lg:text-9xl font-black text-brand-orange/5 tracking-tighter">
+                      // Huge decorative Year (Fade & Scale in background)
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true, margin: '-100px' }}
+                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                        className="flex justify-end select-none"
+                      >
+                        <span className="font-serif text-8xl lg:text-9xl font-black text-brand-orange/15 tracking-tighter">
                           {m.year}
                         </span>
-                      </div>
+                      </motion.div>
                     )}
                   </div>
 
                   {/* Right Side Container (Desktop only) */}
                   <div className="hidden md:block w-1/2 pl-16 text-left">
                     {!isEven ? (
-                      <div className="space-y-3 group hover:translate-y-[-2px] transition-transform duration-300">
+                      <motion.div 
+                        initial={{ opacity: 0, x: 40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, margin: '-100px' }}
+                        transition={{ duration: 0.7, ease: 'easeOut' }}
+                        className="space-y-3 group hover:translate-y-[-2px] transition-transform duration-300"
+                      >
                         <span className="font-serif text-2xl font-extrabold text-brand-orange">
                           {m.year}
                         </span>
@@ -123,19 +161,31 @@ function HistoryTimeline() {
                         <p className="text-brand-grey text-sm leading-relaxed max-w-lg">
                           {m.desc}
                         </p>
-                      </div>
+                      </motion.div>
                     ) : (
-                      // Huge decorative Year on the opposite side to balance the space
-                      <div className="flex justify-start select-none">
-                        <span className="font-serif text-8xl lg:text-9xl font-black text-brand-orange/5 tracking-tighter">
+                      // Huge decorative Year (Fade & Scale in background)
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true, margin: '-100px' }}
+                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                        className="flex justify-start select-none"
+                      >
+                        <span className="font-serif text-8xl lg:text-9xl font-black text-brand-orange/15 tracking-tighter">
                           {m.year}
                         </span>
-                      </div>
+                      </motion.div>
                     )}
                   </div>
 
                   {/* Mobile-only Layout Container */}
-                  <div className="md:hidden w-full pl-12 text-left space-y-2 pb-8">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-60px' }}
+                    transition={{ duration: 0.6 }}
+                    className="md:hidden w-full pl-12 text-left space-y-2 pb-8"
+                  >
                     <span className="font-serif text-2xl font-extrabold text-brand-orange block">
                       {m.year}
                     </span>
@@ -145,7 +195,7 @@ function HistoryTimeline() {
                     <p className="text-brand-grey text-xs leading-relaxed">
                       {m.desc}
                     </p>
-                  </div>
+                  </motion.div>
 
                 </div>
               )

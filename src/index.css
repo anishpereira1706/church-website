@@ -2,20 +2,32 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-peach: #ffffff;
-  --color-brand-peach-hover: #fcfcfc;
-  --color-brand-orange: #e96b39;
-  --color-brand-red: #c83226;
-  --color-brand-grey: #64748b;
-  --color-brand-charcoal: #1e293b;
-  
+  --color-brand-peach: #faf8f5;
+  --color-brand-peach-hover: #f5f2eb;
+  --color-brand-orange: #c5a059;
+  --color-brand-red: #d4af37;
+  --color-brand-grey: #69788e;
+  --color-brand-charcoal: #1a2638;
+
   --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-serif: 'Instrument Serif', Georgia, serif;
 }
 
 @layer base {
+  html {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+  }
+
   body {
-    background-color: #ffffff;
+    background-color: #faf8f5;
     color: var(--color-brand-charcoal);
     font-family: var(--font-sans);
     overflow-x: hidden;
@@ -23,24 +35,32 @@
 }
 
 @keyframes float-slow {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate(0px, 0px) scale(1);
   }
+
   33% {
     transform: translate(30px, -50px) scale(1.1);
   }
+
   66% {
     transform: translate(-20px, 20px) scale(0.95);
   }
 }
 
 @keyframes float-reverse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate(0px, 0px) scale(1);
   }
+
   33% {
     transform: translate(-30px, 40px) scale(0.95);
   }
+
   66% {
     transform: translate(20px, -20px) scale(1.05);
   }
@@ -52,4 +72,59 @@
 
 .animate-float-reverse {
   animation: float-reverse 18s ease-in-out infinite;
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg,
+      #9e6b00 0%,
+      #d49b00 25%,
+      #ffea85 50%,
+      #fff5be 65%,
+      #d49b00 80%,
+      #9e6b00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gold-gradient {
+  background: linear-gradient(135deg,
+      #9e6b00 0%,
+      #d49b00 25%,
+      #ffea85 50%,
+      #fff5be 65%,
+      #d49b00 80%,
+      #9e6b00 100%);
+}
+
+@keyframes ember-rise {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.75;
+  }
+
+  85% {
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: translateY(-110vh) translateX(var(--drift, 50px)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+@keyframes gold-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

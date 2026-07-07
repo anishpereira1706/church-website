@@ -12,7 +12,7 @@ function MassTimings() {
             Liturgy Schedule
           </span>
           <h2 className="font-serif text-4xl md:text-5xl font-light text-brand-charcoal">
-            Join Us in <span className="font-serif italic bg-gradient-to-r from-rose-500 via-[#e96b39] to-brand-red bg-clip-text text-transparent font-bold">Worship & Prayer</span>
+            Join Us in <span className="font-serif italic text-gold-gradient font-bold">Worship & Prayer</span>
           </h2>
           <p className="text-brand-grey text-sm md:text-base leading-relaxed">
             Participate in our daily and weekend celebrations. We welcome everyone to gather in faith and fellowship.
@@ -59,9 +59,7 @@ function MassTimings() {
                 </div>
               </div>
               
-              <p className="text-xs text-brand-grey border-t border-slate-100/50 pt-6">
-                *Daily masses are held inside the main church chapel.
-              </p>
+
             </div>
 
             {/* Column 2: Sunday Liturgies */}
@@ -100,9 +98,7 @@ function MassTimings() {
                 </div>
               </div>
               
-              <p className="text-xs text-brand-grey border-t border-slate-100/50 pt-6">
-                *Catechism classes are held in the adjacent school classrooms.
-              </p>
+
             </div>
 
 
