@@ -22,7 +22,7 @@ function ParishPriest() {
           
           {/* Left Column: Framed Photo */}
           <div className="md:col-span-5 flex justify-center">
-            <div className="relative w-full max-w-[280px] aspect-[4/5] bg-white p-3 rounded-2xl shadow-xl shadow-brand-charcoal/[0.04] border border-brand-charcoal/5 transform hover:scale-[1.01] transition-transform duration-300 z-10">
+            <div className="relative w-full max-w-[230px] aspect-[4/5] bg-white p-3 rounded-2xl shadow-xl shadow-brand-charcoal/[0.04] border border-brand-charcoal/5 transform hover:scale-[1.01] transition-transform duration-300 z-10">
               
               {/* Hollow Gold Ring Accent Frame matching Hero style */}
               <div 
