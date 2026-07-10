@@ -104,3 +104,71 @@ export async function DELETE(req) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
 }
+
+export async function PUT(req) {
+  try {
+    await dbConnect()
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 })
+    }
+
+    const announcement = await Announcement.findById(id)
+    if (!announcement) {
+      return NextResponse.json({ success: false, error: 'Announcement not found' }, { status: 404 })
+    }
+
+    const formData = await req.formData()
+    
+    // Update text fields if provided
+    if (formData.has('title')) announcement.title = formData.get('title')
+    if (formData.has('description')) announcement.description = formData.get('description')
+    if (formData.has('content')) announcement.content = formData.get('content')
+    if (formData.has('category')) announcement.category = formData.get('category')
+    if (formData.has('date')) announcement.date = formData.get('date')
+
+    // Handle new poster image (optional)
+    const file = formData.get('file')
+    if (file && file.size > 0 && typeof file !== 'string') {
+      const bytes = await file.arrayBuffer()
+      const buffer = Buffer.from(bytes)
+      const fileUri = `data:${file.type};base64,${buffer.toString('base64')}`
+
+      const uploadResponse = await cloudinary.uploader.upload(fileUri, {
+        folder: 'church_announcements',
+      })
+      announcement.imageUrl = uploadResponse.secure_url
+    }
+
+    // Handle gallery files (optional)
+    const clearGallery = formData.get('clearGallery') === 'true'
+    if (clearGallery) {
+      announcement.galleryUrls = []
+    }
+
+    const galleryFiles = formData.getAll('gallery')
+    if (galleryFiles && galleryFiles.length > 0) {
+      const newGalleryUrls = []
+      for (const gFile of galleryFiles) {
+        if (gFile && gFile.size > 0 && typeof gFile !== 'string') {
+          const gBytes = await gFile.arrayBuffer()
+          const gBuffer = Buffer.from(gBytes)
+          const gFileUri = `data:${gFile.type};base64,${gBuffer.toString('base64')}`
+
+          const gUploadResponse = await cloudinary.uploader.upload(gFileUri, {
+            folder: 'church_announcements_gallery',
+          })
+          newGalleryUrls.push(gUploadResponse.secure_url)
+        }
+      }
+      announcement.galleryUrls = [...announcement.galleryUrls, ...newGalleryUrls]
+    }
+
+    await announcement.save()
+    return NextResponse.json({ success: true, data: announcement })
+  } catch (error) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+  }
+}
