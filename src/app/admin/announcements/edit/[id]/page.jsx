@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Shield, Save, RefreshCw } from 'lucide-react'
+import { compressImage } from '../../../../../lib/utils'
 
 export default function EditAnnouncementPage() {
   const router = useRouter()
@@ -66,30 +67,40 @@ export default function EditAnnouncementPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    setMessage({ type: '', text: '' })
-
-    const formData = new FormData()
-    formData.append('title', title)
-    formData.append('description', description)
-    formData.append('content', content)
-    formData.append('category', category)
-    formData.append('date', date)
-    
-    if (file) {
-      formData.append('file', file)
-    }
-
-    if (clearGallery) {
-      formData.append('clearGallery', 'true')
-    }
-
-    if (galleryFiles && galleryFiles.length > 0) {
-      for (let i = 0; i < galleryFiles.length; i++) {
-        formData.append('gallery', galleryFiles[i])
-      }
-    }
+    setMessage({ type: 'info', text: 'Compressing high-res images in browser...' })
 
     try {
+      // Compress file (if a new poster was chosen)
+      const compressedFile = file ? await compressImage(file, 2000, 0.8) : null
+
+      // Compress gallery files (if new ones were added)
+      const compressedGallery = galleryFiles && galleryFiles.length > 0
+        ? await Promise.all(galleryFiles.map(gFile => compressImage(gFile, 2000, 0.8)))
+        : []
+
+      setMessage({ type: 'info', text: 'Uploading updates to cloud...' })
+
+      const formData = new FormData()
+      formData.append('title', title)
+      formData.append('description', description)
+      formData.append('content', content)
+      formData.append('category', category)
+      formData.append('date', date)
+      
+      if (compressedFile) {
+        formData.append('file', compressedFile)
+      }
+
+      if (clearGallery) {
+        formData.append('clearGallery', 'true')
+      }
+
+      if (compressedGallery && compressedGallery.length > 0) {
+        for (let i = 0; i < compressedGallery.length; i++) {
+          formData.append('gallery', compressedGallery[i])
+        }
+      }
+
       const res = await fetch(`/api/announcements?id=${id}`, {
         method: 'PUT',
         body: formData

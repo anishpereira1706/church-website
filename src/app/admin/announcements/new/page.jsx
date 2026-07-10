@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Shield, UploadCloud } from 'lucide-react'
+import { compressImage } from '../../../../lib/utils'
 
 export default function CreateAnnouncementPage() {
   const router = useRouter()
@@ -36,23 +37,33 @@ export default function CreateAnnouncementPage() {
     }
 
     setIsSubmitting(true)
-    setMessage({ type: '', text: '' })
-
-    const formData = new FormData()
-    formData.append('title', title)
-    formData.append('description', description)
-    formData.append('content', content)
-    formData.append('category', category)
-    formData.append('date', date)
-    formData.append('file', file)
-
-    if (galleryFiles && galleryFiles.length > 0) {
-      for (let i = 0; i < galleryFiles.length; i++) {
-        formData.append('gallery', galleryFiles[i])
-      }
-    }
+    setMessage({ type: 'info', text: 'Compressing high-res images in browser...' })
 
     try {
+      // Compress primary poster file
+      const compressedFile = await compressImage(file, 2000, 0.8)
+
+      // Compress gallery files
+      const compressedGallery = await Promise.all(
+        galleryFiles.map(gFile => compressImage(gFile, 2000, 0.8))
+      )
+
+      setMessage({ type: 'info', text: 'Uploading files to cloud...' })
+
+      const formData = new FormData()
+      formData.append('title', title)
+      formData.append('description', description)
+      formData.append('content', content)
+      formData.append('category', category)
+      formData.append('date', date)
+      formData.append('file', compressedFile)
+
+      if (compressedGallery && compressedGallery.length > 0) {
+        for (let i = 0; i < compressedGallery.length; i++) {
+          formData.append('gallery', compressedGallery[i])
+        }
+      }
+
       const res = await fetch('/api/announcements', {
         method: 'POST',
         body: formData
