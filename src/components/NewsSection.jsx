@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { getOptimizedImageUrl } from '../lib/utils'
 
 const CATEGORIES = ['News', 'Announcements', 'Blog']
@@ -103,17 +104,27 @@ function NewsSection() {
                 </div>
 
                 {/* Card Info */}
-                <div className="p-6 flex-grow flex flex-col justify-between space-y-4">
+                <div className="p-6 flex-grow flex flex-col justify-between">
                   <div className="space-y-2">
                     <span className="text-[10px] font-bold text-brand-orange uppercase tracking-wider block">
                       {item.date}
                     </span>
-                    <h3 className="font-serif text-xl font-semibold text-brand-charcoal line-clamp-2">
+                    <h3 className="font-serif text-xl font-semibold text-brand-charcoal line-clamp-2 min-h-[3.5rem]">
                       {item.title}
                     </h3>
-                    <p className="text-brand-grey text-xs leading-relaxed line-clamp-3">
+                    <p className="text-brand-grey text-xs leading-relaxed line-clamp-3 mb-4">
                       {item.description}
                     </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-50">
+                    <Link
+                      href={`/news/${item._id}`}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#c5a059] hover:text-[#1a2638] transition-colors group cursor-pointer"
+                    >
+                      Read Full Article
+                      <span className="transform group-hover:translate-x-0.5 transition-transform">→</span>
+                    </Link>
                   </div>
                 </div>
               </div>

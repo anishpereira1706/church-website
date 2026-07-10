@@ -23,6 +23,14 @@ const AnnouncementSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please upload a poster image'],
   },
+  content: {
+    type: String,
+    required: [true, 'Please provide full content'],
+  },
+  galleryUrls: {
+    type: [String],
+    default: [],
+  },
 }, {
   timestamps: true,
 })

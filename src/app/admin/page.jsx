@@ -11,9 +11,11 @@ export default function AdminPage() {
   // Form State
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [content, setContent] = useState('')
   const [category, setCategory] = useState('News')
   const [date, setDate] = useState('')
   const [file, setFile] = useState(null)
+  const [galleryFiles, setGalleryFiles] = useState([])
   
   // List State
   const [announcements, setAnnouncements] = useState([])
@@ -85,9 +87,16 @@ export default function AdminPage() {
     const formData = new FormData()
     formData.append('title', title)
     formData.append('description', description)
+    formData.append('content', content)
     formData.append('category', category)
     formData.append('date', date)
     formData.append('file', file)
+
+    if (galleryFiles && galleryFiles.length > 0) {
+      for (let i = 0; i < galleryFiles.length; i++) {
+        formData.append('gallery', galleryFiles[i])
+      }
+    }
 
     try {
       const res = await fetch('/api/announcements', {
@@ -99,10 +108,14 @@ export default function AdminPage() {
         setMessage({ type: 'success', text: 'Announcement published successfully!' })
         setTitle('')
         setDescription('')
+        setContent('')
         setDate('')
         setFile(null)
-        // Reset file input element
+        setGalleryFiles([])
+        // Reset file input elements
         document.getElementById('file-input').value = ''
+        const gInput = document.getElementById('gallery-input')
+        if (gInput) gInput.value = ''
         fetchAnnouncements()
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to publish announcement.' })
@@ -255,29 +268,60 @@ export default function AdminPage() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
+                      Poster Image
+                    </label>
+                    <input
+                      id="file-input"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setFile(e.target.files[0])}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-xs bg-white"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
+                      Gallery Images (Optional)
+                    </label>
+                    <input
+                      id="gallery-input"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => setGalleryFiles(Array.from(e.target.files))}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-xs bg-white"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
-                    Poster Image
+                    Summary (Short text for Homepage Card)
                   </label>
-                  <input
-                    id="file-input"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setFile(e.target.files[0])}
-                    className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-xs"
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Brief snippet (max 150 chars)"
+                    rows={2}
+                    maxLength={180}
+                    className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-sm"
                     required
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
-                    Description / Content
+                    Full Content / Article Text (for Read More Page)
                   </label>
                   <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Enter detailed description"
-                    rows={4}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="Describe the full announcement here..."
+                    rows={5}
                     className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-sm"
                     required
                   />
