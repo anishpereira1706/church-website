@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Calendar, Tag, Image as ImageIcon, X } from 'lucide-react'
 import { getOptimizedImageUrl } from '../../../lib/utils'
+import priestBg from '../../../assets/priest_bg.jpg'
 
 export default function AnnouncementDetailPage() {
   const { id } = useParams()
@@ -71,7 +72,14 @@ export default function AnnouncementDetailPage() {
   const displayContent = announcement.content || announcement.description
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] text-[#1a2638] selection:bg-[#c5a059]/20 selection:text-[#1a2638] pb-24">
+    <div className="relative min-h-screen bg-[#faf8f5] text-[#1a2638] selection:bg-[#c5a059]/20 selection:text-[#1a2638] pb-24 overflow-x-hidden">
+      {/* Background Graphic matching Parish Priest section */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.35] pointer-events-none -z-10" 
+        style={{ 
+          backgroundImage: `linear-gradient(to right, rgba(250, 248, 245, 1) 0%, rgba(250, 248, 245, 0.95) 45%, rgba(250, 248, 245, 0.35) 100%), url(${priestBg.src})`
+        }}
+      />
       {/* Lightbox Modal */}
       <AnimatePresence>
         {activeLightboxImage && (
