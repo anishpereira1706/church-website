@@ -101,7 +101,7 @@ export default function AnnouncementDetailPage() {
       </AnimatePresence>
 
       {/* Nav Back Header */}
-      <header className="sticky top-0 bg-[#faf8f5]/85 backdrop-blur-md border-b border-[#1a2638]/5 z-30 px-8 py-4">
+      <header className="sticky top-0 bg-[#faf8f5]/85 backdrop-blur-md border-b border-[#1a2638]/5 z-30 px-8 py-4 flex items-center justify-between">
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#69788e] hover:text-[#1a2638] transition-colors group cursor-pointer"
@@ -109,13 +109,24 @@ export default function AnnouncementDetailPage() {
           <ArrowLeft size={16} className="transform group-hover:-translate-x-1 transition-transform" />
           Back to Homepage
         </Link>
+        
+        <div className="flex items-center gap-4 text-xs text-[#69788e] font-semibold">
+          <span className="flex items-center gap-1.5 px-3 py-1 bg-[#c5a059]/10 text-[#c5a059] rounded-full uppercase tracking-wider text-[10px]">
+            <Tag size={10} />
+            {announcement.category}
+          </span>
+          <span className="flex items-center gap-1.5 py-1 uppercase tracking-wider text-[10px]">
+            <Calendar size={10} className="text-[#c5a059]" />
+            {announcement.date}
+          </span>
+        </div>
       </header>
 
       {/* Main Full-Page Layout Container */}
       <main className="max-w-[1400px] mx-auto px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
-          {/* Left Column: Metadata & Framed Poster (Smaller) */}
+          {/* Left Column: Framed Poster (Smaller) */}
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 flex flex-col items-center lg:items-stretch">
             {/* Poster with Gold Accent Ring Frame */}
             <div className="relative w-full max-w-[340px] rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-white p-2">
@@ -132,20 +143,6 @@ export default function AnnouncementDetailPage() {
                 alt={announcement.title}
                 className="w-full h-auto object-contain rounded-xl block"
               />
-            </div>
-
-            {/* Meta Card */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md space-y-4 w-full max-w-[340px]">
-              <div className="flex items-center gap-2 text-xs text-[#69788e] font-semibold">
-                <span className="flex items-center gap-1.5 px-3 py-1 bg-[#c5a059]/10 text-[#c5a059] rounded-full uppercase tracking-wider">
-                  <Tag size={12} />
-                  {announcement.category}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-brand-grey font-semibold">
-                <Calendar size={14} className="text-[#c5a059]" />
-                <span className="uppercase tracking-wider">Published: {announcement.date}</span>
-              </div>
             </div>
           </div>
 
