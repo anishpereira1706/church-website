@@ -73,13 +73,13 @@ export default function AnnouncementDetailPage() {
 
   return (
     <div className="relative min-h-screen bg-[#faf8f5] text-[#1a2638] selection:bg-[#c5a059]/20 selection:text-[#1a2638] pb-24 overflow-x-hidden">
-      {/* Background Graphic matching Parish Priest section */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.35] pointer-events-none -z-10" 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat opacity-[0.35] pointer-events-none z-0" 
         style={{ 
           backgroundImage: `linear-gradient(to right, rgba(250, 248, 245, 1) 0%, rgba(250, 248, 245, 0.95) 45%, rgba(250, 248, 245, 0.35) 100%), url(${priestBg.src})`
         }}
       />
+
       {/* Lightbox Modal */}
       <AnimatePresence>
         {activeLightboxImage && (
@@ -109,7 +109,7 @@ export default function AnnouncementDetailPage() {
       </AnimatePresence>
 
       {/* Nav Back Header */}
-      <header className="sticky top-0 bg-[#faf8f5]/85 backdrop-blur-md border-b border-[#1a2638]/5 z-30 px-8 py-4 flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 bg-[#faf8f5]/85 backdrop-blur-md border-b border-[#1a2638]/5 z-30 px-8 py-4 flex items-center justify-between">
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#69788e] hover:text-[#1a2638] transition-colors group cursor-pointer"
@@ -117,7 +117,7 @@ export default function AnnouncementDetailPage() {
           <ArrowLeft size={16} className="transform group-hover:-translate-x-1 transition-transform" />
           Back to Homepage
         </Link>
-        
+
         <div className="flex items-center gap-3 text-xs">
           <span className="flex items-center gap-1.5 px-3 py-1.5 bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/20 rounded-full uppercase tracking-wider text-[10px] font-bold shadow-sm">
             <Tag size={11} />
@@ -131,14 +131,14 @@ export default function AnnouncementDetailPage() {
       </header>
 
       {/* Main Full-Page Layout Container */}
-      <main className="max-w-[1400px] mx-auto px-8 py-10">
+      <main className="relative z-10 max-w-[1400px] mx-auto px-8 pt-28 pb-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
+
           {/* Left Column: Framed Poster (Smaller) */}
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 flex flex-col items-center lg:items-stretch">
             {/* Poster with Gold Accent Ring Frame */}
             <div className="relative w-full max-w-[340px] rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-white p-2">
-              <div 
+              <div
                 className="absolute -inset-1 rounded-2xl border-[2.5px] border-transparent -z-10"
                 style={{
                   background: 'linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(135deg, #9e6b00, #ffea85, #d49b00, #ffea85, #9e6b00) border-box',
@@ -163,7 +163,7 @@ export default function AnnouncementDetailPage() {
               <div className="h-[2px] w-20 bg-gradient-to-r from-[#c5a059] to-transparent" />
             </div>
 
-            <article className="prose max-w-none text-brand-charcoal text-base md:text-lg leading-relaxed font-light space-y-6 text-[#374151]">
+            <article className="prose max-w-none text-brand-charcoal text-base md:text-lg leading-relaxed font-light space-y-6 text-[#374151] text-justify">
               {displayContent.split('\n\n').map((paragraph, index) => (
                 <p key={index} className="white-space-pre-wrap">
                   {paragraph}
@@ -171,7 +171,7 @@ export default function AnnouncementDetailPage() {
               ))}
             </article>
 
-            {/* Asymmetric Collage Gallery */}
+             {/* Collage Gallery */}
             {announcement.galleryUrls && announcement.galleryUrls.length > 0 && (
               <div className="pt-10 border-t border-slate-200 space-y-6">
                 <h2 className="font-serif text-2xl font-light text-[#1a2638] flex items-center gap-2">
@@ -179,37 +179,21 @@ export default function AnnouncementDetailPage() {
                   Event Gallery
                 </h2>
 
-                <div className="grid grid-cols-6 gap-4 auto-rows-[140px] sm:auto-rows-[180px]">
-                  {announcement.galleryUrls.map((url, i) => {
-                    // Define grid classes to build an asymmetric collage layout based on index i
-                    let gridClass = "col-span-2 row-span-1" // Default fallback
-                    if (i % 5 === 0) {
-                      gridClass = "col-span-4 row-span-2" // Large main focus
-                    } else if (i % 5 === 1) {
-                      gridClass = "col-span-2 row-span-2" // Tall side image
-                    } else if (i % 5 === 2) {
-                      gridClass = "col-span-3 row-span-1" // Wide image
-                    } else if (i % 5 === 3) {
-                      gridClass = "col-span-3 row-span-1" // Wide image
-                    } else if (i % 5 === 4) {
-                      gridClass = "col-span-6 row-span-2" // Extra wide banner
-                    }
-                    
-                    return (
-                      <div
-                        key={i}
-                        onClick={() => setActiveLightboxImage(url)}
-                        className={`group relative bg-slate-100 rounded-2xl overflow-hidden cursor-zoom-in border border-slate-200/50 shadow-sm transition-all duration-300 hover:scale-[1.01] hover:shadow-md ${gridClass}`}
-                      >
-                        <img
-                          src={getOptimizedImageUrl(url, 800)}
-                          alt={`Gallery ${i}`}
-                          className="w-full h-full object-cover transform group-hover:scale-103 transition-transform duration-700 ease-out"
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                      </div>
-                    )
-                  })}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {announcement.galleryUrls.map((url, i) => (
+                    <div
+                      key={i}
+                      onClick={() => setActiveLightboxImage(url)}
+                      className="group relative aspect-square w-full bg-slate-100 rounded-xl overflow-hidden cursor-zoom-in border border-slate-200/50 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md"
+                    >
+                      <img
+                        src={getOptimizedImageUrl(url, 800)}
+                        alt={`Gallery ${i}`}
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

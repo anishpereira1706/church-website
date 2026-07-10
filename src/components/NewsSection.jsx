@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { getOptimizedImageUrl } from '../lib/utils'
 
+import priestBg from '../assets/priest_bg.jpg'
+
 const CATEGORIES = ['News', 'Announcements', 'Blog']
 
 function NewsSection() {
@@ -31,8 +33,16 @@ function NewsSection() {
   const filtered = announcements.filter(ann => ann.category === activeCategory)
 
   return (
-    <section id="news" className="bg-white py-24 border-t border-slate-100">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="news" className="relative bg-white py-24 border-t border-slate-100 overflow-hidden">
+      {/* Mirrored priest background watermark */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.25] pointer-events-none z-0 scale-x-[-1]" 
+        style={{ 
+          backgroundImage: `linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.95) 45%, rgba(255, 255, 255, 0.35) 100%), url(${priestBg.src})`
+        }}
+      />
+
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
         
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
@@ -104,20 +114,20 @@ function NewsSection() {
                 </div>
 
                 {/* Card Info */}
-                <div className="p-6 flex-grow flex flex-col justify-between">
-                  <div className="space-y-2">
+                <div className="p-5 flex-grow flex flex-col">
+                  <div className="space-y-3 flex-grow">
                     <span className="text-[10px] font-bold text-brand-orange uppercase tracking-wider block">
                       {item.date}
                     </span>
-                    <h3 className="font-serif text-xl font-semibold text-brand-charcoal line-clamp-2 min-h-[3.5rem]">
+                    <h3 className="font-serif text-lg font-semibold text-brand-charcoal line-clamp-2">
                       {item.title}
                     </h3>
-                    <p className="text-brand-grey text-xs leading-relaxed line-clamp-3 mb-4">
+                    <p className="text-brand-grey text-xs leading-relaxed line-clamp-3">
                       {item.description}
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-50">
+                  <div className="pt-4 mt-5 border-t border-slate-50 shrink-0">
                     <Link
                       href={`/news/${item._id}`}
                       className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#c5a059] hover:text-[#1a2638] transition-colors group cursor-pointer"

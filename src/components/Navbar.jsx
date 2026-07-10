@@ -35,7 +35,8 @@ function Navbar({ currentTab, setCurrentTab }) {
             </svg>
           </div>
           <span className="font-sans text-lg md:text-xl font-extrabold tracking-tight text-brand-charcoal group-hover:text-brand-orange transition-colors">
-            Infant Mary Church, Katipalla
+            <span className="hidden sm:inline">Infant Mary Church, Katipalla</span>
+            <span className="inline sm:hidden">IMC Katipalla</span>
           </span>
         </button>
         

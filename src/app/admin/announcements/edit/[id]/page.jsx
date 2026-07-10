@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Shield, Save, RefreshCw } from 'lucide-react'
-import { compressImage } from '../../../../../lib/utils'
+import { compressImage, getOptimizedImageUrl } from '../../../../../lib/utils'
+import churchImg from '../../../../../assets/church2.jpg'
 
 export default function EditAnnouncementPage() {
   const router = useRouter()
@@ -18,9 +19,11 @@ export default function EditAnnouncementPage() {
   const [date, setDate] = useState('')
   const [file, setFile] = useState(null)
   const [galleryFiles, setGalleryFiles] = useState([])
-  const [clearGallery, setClearGallery] = useState(false)
+  const [deletedGalleryUrls, setDeletedGalleryUrls] = useState([])
+  const [deletePoster, setDeletePoster] = useState(false)
   const [existingImageUrl, setExistingImageUrl] = useState('')
   const [existingGalleryCount, setExistingGalleryCount] = useState(0)
+  const [existingGalleryUrls, setExistingGalleryUrls] = useState([])
   
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -53,6 +56,7 @@ export default function EditAnnouncementPage() {
         setDate(ann.date || '')
         setExistingImageUrl(ann.imageUrl || '')
         setExistingGalleryCount(ann.galleryUrls ? ann.galleryUrls.length : 0)
+        setExistingGalleryUrls(ann.galleryUrls || [])
       } else {
         setMessage({ type: 'error', text: 'Announcement not found.' })
       }
@@ -62,6 +66,17 @@ export default function EditAnnouncementPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleRemoveImage = (urlToRemove) => {
+    setDeletedGalleryUrls(prev => [...prev, urlToRemove])
+    setExistingGalleryUrls(prev => prev.filter(url => url !== urlToRemove))
+    setExistingGalleryCount(prev => prev - 1)
+  }
+
+  const handleRemovePoster = () => {
+    setDeletePoster(true)
+    setExistingImageUrl('')
   }
 
   const handleSubmit = async (e) => {
@@ -91,8 +106,12 @@ export default function EditAnnouncementPage() {
         formData.append('file', compressedFile)
       }
 
-      if (clearGallery) {
-        formData.append('clearGallery', 'true')
+      if (deletePoster) {
+        formData.append('deletePoster', 'true')
+      }
+
+      if (deletedGalleryUrls.length > 0) {
+        formData.append('deletedGalleryUrls', JSON.stringify(deletedGalleryUrls))
       }
 
       if (compressedGallery && compressedGallery.length > 0) {
@@ -133,9 +152,17 @@ export default function EditAnnouncementPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] text-[#1a2638] pb-24">
+    <div className="relative min-h-screen bg-[#faf8f5] text-[#1a2638] selection:bg-[#c5a059]/20 pb-24 overflow-x-hidden">
+      {/* Background Graphic matching Admin Landing page */}
+      <div 
+        className="fixed inset-0 bg-center bg-no-repeat opacity-[0.42] pointer-events-none z-0 bg-cover lg:bg-[length:100%_auto]" 
+        style={{ 
+          backgroundImage: `linear-gradient(to bottom, rgba(250, 248, 245, 0.5) 0%, rgba(250, 248, 245, 0.8) 100%), url(${churchImg.src})`
+        }}
+      />
+
       {/* Header */}
-      <header className="bg-white border-b border-[#1a2638]/5 px-8 py-5 flex items-center gap-4 sticky top-0 z-20">
+      <header className="fixed top-0 left-0 right-0 z-25 bg-white/40 backdrop-blur-md border-b border-white/50 px-8 py-5 flex items-center gap-4">
         <Link
           href="/admin/announcements"
           className="p-2 hover:bg-slate-50 rounded-lg text-[#69788e] hover:text-[#1a2638] transition-colors cursor-pointer"
@@ -154,161 +181,205 @@ export default function EditAnnouncementPage() {
       </header>
 
       {/* Main Form container */}
-      <main className="max-w-3xl mx-auto px-6 mt-8">
-        <div className="bg-white p-8 rounded-2xl shadow-xl shadow-brand-charcoal/[0.03] border border-brand-charcoal/5">
-          <form onSubmit={handleSubmit} className="space-y-6">
+      <main className="relative z-10 max-w-[1450px] mx-auto px-8 pt-28">
+        {message.text && (
+          <div className={`mb-6 p-4 rounded-xl text-sm font-semibold shadow-sm border ${
+            message.type === 'success' 
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
+              : message.type === 'error'
+              ? 'bg-rose-50 border-rose-200 text-rose-800'
+              : 'bg-blue-50 border-blue-200 text-blue-800 animate-pulse'
+          }`}>
+            {message.text}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          
+          {/* Left Column: Media & Previews (1/3rd width) */}
+          <div className="lg:col-span-4 bg-white/40 border border-white/50 backdrop-blur-md p-6 rounded-2xl shadow-xl space-y-6">
+            <h2 className="font-serif text-lg font-bold text-[#1a2638] border-b border-[#1a2638]/5 pb-3 flex items-center gap-2">
+              Media & Scheduling
+            </h2>
+
+            {/* Date Input */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
-                Announcement Title
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
+                Display Date
               </label>
               <input
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter title"
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-sm"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                placeholder="e.g. July 10, 2026"
+                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 bg-white/60 text-[#1a2638] text-sm font-semibold"
                 required
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
-                  Category
-                </label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-sm bg-white"
-                >
-                  <option value="News">News</option>
-                  <option value="Announcements">Announcement</option>
-                  <option value="Blog">Blog</option>
-                </select>
-              </div>
+            {/* Category Select */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
+                Category
+              </label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 bg-white/60 text-[#1a2638] text-sm font-semibold"
+              >
+                <option value="News">News</option>
+                <option value="Announcements">Announcement</option>
+                <option value="Blog">Blog</option>
+              </select>
+            </div>
 
+            {/* Poster Upload & Preview */}
+            <div className="space-y-3">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[#69788e]">
+                Replace Cover Image (Optional)
+              </label>
+              <input
+                id="file-input"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFile(e.target.files[0])}
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-[#1a2638] text-xs bg-white/50 cursor-pointer"
+              />
+              {existingImageUrl && (
+                <div className="p-3 bg-slate-50/50 border border-slate-200/40 rounded-xl space-y-2">
+                  <p className="text-[9px] font-bold text-[#69788e] uppercase tracking-wider">Active Cover:</p>
+                  <div className="relative w-24 aspect-[4/3] rounded-lg overflow-hidden border border-slate-200">
+                    <img
+                      src={getOptimizedImageUrl(existingImageUrl, 200)}
+                      alt="Cover Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemovePoster}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 hover:bg-rose-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow-md cursor-pointer border border-white transition-colors"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Gallery Upload & Previews */}
+            <div className="space-y-3">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[#69788e]">
+                Add Gallery Images (Optional)
+              </label>
+              <input
+                id="gallery-input"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => setGalleryFiles(Array.from(e.target.files))}
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-[#1a2638] text-xs bg-white/50 cursor-pointer"
+              />
+              {existingGalleryUrls && existingGalleryUrls.length > 0 && (
+                <div className="p-3 bg-slate-50/50 border border-slate-200/40 rounded-xl space-y-2">
+                  <p className="text-[9px] font-bold text-[#69788e] uppercase tracking-wider">
+                    Gallery Photos ({existingGalleryCount}):
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {existingGalleryUrls.map((url, idx) => (
+                      <div key={idx} className="relative w-12 h-12 rounded-md overflow-hidden border border-slate-200 shrink-0">
+                        <img
+                          src={getOptimizedImageUrl(url, 150)}
+                          alt={`Gallery ${idx}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(url)}
+                          className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-rose-500 hover:bg-rose-600 text-white rounded-full flex items-center justify-center text-[9px] font-bold shadow-md cursor-pointer border border-white transition-colors"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column: Article Details & Text Editors (2/3rds width) */}
+          <div className="lg:col-span-8 bg-white/40 border border-white/50 backdrop-blur-md p-8 rounded-2xl shadow-xl flex flex-col justify-between space-y-8">
+            <div className="space-y-6">
+              <h2 className="font-serif text-lg font-bold text-[#1a2638] border-b border-[#1a2638]/5 pb-3">
+                Article Content
+              </h2>
+
+              {/* Title */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
-                  Display Date
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
+                  Announcement Title
                 </label>
                 <input
                   type="text"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  placeholder="e.g. July 10, 2026"
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-sm"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter title"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 bg-white/60 text-[#1a2638] text-base font-semibold"
+                  required
+                />
+              </div>
+
+              {/* Summary */}
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
+                  Summary (Short text for Homepage Card)
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Brief snippet (max 180 chars)"
+                  rows={2}
+                  maxLength={180}
+                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 bg-white/60 text-[#1a2638] text-sm"
+                  required
+                />
+              </div>
+
+              {/* Full Content */}
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
+                  Full Content / Article Text (for Read More Page)
+                </label>
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="Describe the full announcement details here. Standard paragraphs will align beautifully as justified blocks..."
+                  rows={12}
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 bg-white/60 text-[#1a2638] text-sm leading-relaxed"
                   required
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
-                  Replace Poster Image (Optional)
-                </label>
-                <input
-                  id="file-input"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFile(e.target.files[0])}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-xs bg-white"
-                />
-                {existingImageUrl && (
-                  <p className="text-[10px] text-[#69788e] mt-1 font-light italic">
-                    Currently has poster image uploaded.
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
-                  Add Gallery Images (Optional)
-                </label>
-                <input
-                  id="gallery-input"
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => setGalleryFiles(Array.from(e.target.files))}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-xs bg-white"
-                />
-                <p className="text-[10px] text-[#69788e] mt-1 font-light italic">
-                  Currently has **{existingGalleryCount}** gallery images.
-                </p>
-              </div>
-            </div>
-
-            {existingGalleryCount > 0 && (
-              <div className="p-3 bg-slate-50 border border-slate-200/60 rounded-lg flex items-center gap-2">
-                <input
-                  id="clear-gallery"
-                  type="checkbox"
-                  checked={clearGallery}
-                  onChange={(e) => setClearGallery(e.target.checked)}
-                  className="w-4 h-4 text-[#c5a059] border-slate-300 rounded focus:ring-[#c5a059]/40"
-                />
-                <label htmlFor="clear-gallery" className="text-xs text-brand-charcoal font-semibold cursor-pointer">
-                  Delete all existing gallery images and start fresh
-                </label>
-              </div>
-            )}
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
-                Summary (Short text for Homepage Card)
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Brief snippet (max 150 chars)"
-                rows={2}
-                maxLength={180}
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-sm"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#69788e] mb-1.5">
-                Full Content / Article Text (for Read More Page)
-              </label>
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Describe the full announcement here..."
-                rows={6}
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/40 text-[#1a2638] text-sm"
-                required
-              />
-            </div>
-
-            {message.text && (
-              <div className={`p-3 rounded-lg text-xs font-medium ${
-                message.type === 'success' ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'
-              }`}>
-                {message.text}
-              </div>
-            )}
-
-            <div className="flex gap-4">
+            {/* Action Buttons Container */}
+            <div className="flex items-center justify-end gap-4 pt-6 border-t border-[#1a2638]/5">
               <Link
                 href="/admin/announcements"
-                className="w-1/3 py-3 border border-slate-200 hover:bg-slate-50 text-center text-slate-700 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors cursor-pointer"
+                className="px-6 py-3 bg-white/80 border border-slate-200 text-[#69788e] hover:text-[#1a2638] hover:bg-slate-50 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-2/3 py-3 bg-[#1a2638] hover:bg-[#1a2638]/95 disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-md"
+                className="px-8 py-3 bg-gradient-to-r from-[#9e6b00] to-[#d49b00] text-white hover:opacity-95 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
                 <Save size={16} />
                 {isSubmitting ? 'Updating...' : 'Save Changes'}
               </button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </main>
     </div>
   )
