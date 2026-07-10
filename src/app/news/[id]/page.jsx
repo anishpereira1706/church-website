@@ -118,7 +118,7 @@ export default function AnnouncementDetailPage() {
           {/* Left Column: Metadata & Framed Poster (Smaller) */}
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 flex flex-col items-center lg:items-stretch">
             {/* Poster with Gold Accent Ring Frame */}
-            <div className="relative w-full max-w-[340px] aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-white p-2">
+            <div className="relative w-full max-w-[340px] rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-white p-2">
               <div 
                 className="absolute -inset-1 rounded-2xl border-[2.5px] border-transparent -z-10"
                 style={{
@@ -130,7 +130,7 @@ export default function AnnouncementDetailPage() {
               <img
                 src={getOptimizedImageUrl(announcement.imageUrl, 600)}
                 alt={announcement.title}
-                className="w-full h-full object-cover rounded-xl"
+                className="w-full h-auto object-contain rounded-xl block"
               />
             </div>
 
