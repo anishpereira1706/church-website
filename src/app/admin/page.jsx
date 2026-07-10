@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { getOptimizedImageUrl } from '../../lib/utils'
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -318,7 +319,7 @@ export default function AdminPage() {
                     <div key={ann._id} className="py-4 flex gap-4 items-center justify-between group">
                       <div className="flex gap-4 items-center">
                         <img
-                          src={ann.imageUrl}
+                          src={getOptimizedImageUrl(ann.imageUrl, 200)}
                           alt={ann.title}
                           className="w-16 h-16 object-cover rounded-lg border border-slate-100"
                         />

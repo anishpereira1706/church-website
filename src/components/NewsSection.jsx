@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { getOptimizedImageUrl } from '../lib/utils'
 
 const CATEGORIES = ['News', 'Announcements', 'Blog']
 
@@ -92,7 +93,7 @@ function NewsSection() {
                 {/* Poster Image Container with zoom */}
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-50 border-b border-slate-100 group">
                   <img 
-                    src={item.imageUrl} 
+                    src={getOptimizedImageUrl(item.imageUrl, 800)} 
                     alt={item.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
