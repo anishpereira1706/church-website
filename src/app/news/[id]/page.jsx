@@ -110,14 +110,14 @@ export default function AnnouncementDetailPage() {
           Back to Homepage
         </Link>
         
-        <div className="flex items-center gap-4 text-xs text-[#69788e] font-semibold">
-          <span className="flex items-center gap-1.5 px-3 py-1 bg-[#c5a059]/10 text-[#c5a059] rounded-full uppercase tracking-wider text-[10px]">
-            <Tag size={10} />
-            {announcement.category}
+        <div className="flex items-center gap-3 text-xs">
+          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/20 rounded-full uppercase tracking-wider text-[10px] font-bold shadow-sm">
+            <Tag size={11} />
+            Category: {announcement.category}
           </span>
-          <span className="flex items-center gap-1.5 py-1 uppercase tracking-wider text-[10px]">
-            <Calendar size={10} className="text-[#c5a059]" />
-            {announcement.date}
+          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 text-brand-charcoal border border-slate-200/60 rounded-full uppercase tracking-wider text-[10px] font-bold shadow-sm">
+            <Calendar size={11} className="text-[#c5a059]" />
+            Posted on: {announcement.date}
           </span>
         </div>
       </header>
