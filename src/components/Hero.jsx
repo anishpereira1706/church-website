@@ -1,20 +1,28 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { useScroll, useTransform, motion } from 'framer-motion'
 import churchImg from '../assets/church2.jpg'
 import landingBg from '../assets/landing_bg.jpg'
-import landingVideo from '../assets/64058-509542719_medium_1.mp4'
-
-const EMBERS = Array.from({ length: 22 }, (_, i) => ({
-  id: i,
-  left: `${Math.random() * 100}%`,
-  size: `${3 + Math.random() * 4}px`,
-  delay: `${Math.random() * -15}s`, // Negative delay makes them start immediately animated on load!
-  duration: `${10 + Math.random() * 10}s`,
-  drift: `${-100 + Math.random() * 200}px`
-}))
 
 function Hero() {
   const { scrollY } = useScroll()
   const yBg = useTransform(scrollY, [0, 800], [0, 120]) // Parallax scroll offset for mobile background
+  const [embers, setEmbers] = useState([])
+
+  useEffect(() => {
+    // Generate random values on the client to avoid server-side hydration mismatches
+    setEmbers(
+      Array.from({ length: 22 }, (_, i) => ({
+        id: i,
+        left: `${Math.random() * 100}%`,
+        size: `${3 + Math.random() * 4}px`,
+        delay: `${Math.random() * -15}s`,
+        duration: `${10 + Math.random() * 10}s`,
+        drift: `${-100 + Math.random() * 200}px`
+      }))
+    )
+  }, [])
 
   return (
     <section
@@ -30,12 +38,12 @@ function Hero() {
         muted
         playsInline
       >
-        <source src={landingVideo} type="video/mp4" />
+        <source src="/landing_video.mp4" type="video/mp4" />
       </video>
 
       {/* Rising Gold Embers/Particles (Visible on both desktop & mobile) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        {EMBERS.map(ember => (
+        {embers.map(ember => (
           <div
             key={ember.id}
             className="absolute rounded-full bg-gold-gradient blur-[0.5px]"
@@ -64,7 +72,7 @@ function Hero() {
       <motion.div
         className="block md:hidden absolute inset-0 bg-cover bg-[28%_center] opacity-[0.35] pointer-events-none z-0"
         style={{ 
-          backgroundImage: `url(${churchImg})`,
+          backgroundImage: `url(${churchImg.src})`,
           y: yBg
         }}
       />
@@ -114,7 +122,7 @@ function Hero() {
             {/* Semicircle image container */}
             <div className="relative w-full h-full rounded-full md:rounded-l-full md:rounded-r-none overflow-hidden border-4 md:border-t-0 md:border-r-0 md:border-b-0 border-white z-10">
               <img
-                src={churchImg}
+                src={churchImg.src}
                 alt="Infant Mary Church"
                 className="w-full h-full object-cover object-[28%_center] transform hover:scale-105 transition-transform duration-700 ease-out"
               />
@@ -159,7 +167,7 @@ function Hero() {
               }}
             />
             <img
-              src={churchImg}
+              src={churchImg.src}
               alt="Infant Mary Church"
               className="w-full h-full object-cover object-[28%_center]"
             />

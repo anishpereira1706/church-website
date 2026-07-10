@@ -1,3 +1,5 @@
+'use client'
+
 import { motion } from 'framer-motion'
 import beachImg from '../assets/beach.webp'
 
@@ -55,7 +57,7 @@ function HistoryTimeline() {
       {/* Viewport-fixed background image with low opacity for parallax scrolling */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat opacity-[0.15] pointer-events-none -z-10" 
-        style={{ backgroundImage: `url(${beachImg})` }}
+        style={{ backgroundImage: `url(${beachImg.src})` }}
       />
       
       <div className="relative mx-auto max-w-7xl px-6 z-10">

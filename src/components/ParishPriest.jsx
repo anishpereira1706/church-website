@@ -8,7 +8,7 @@ function ParishPriest() {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.35] pointer-events-none z-0" 
         style={{ 
-          backgroundImage: `linear-gradient(to right, rgba(250, 248, 245, 1) 0%, rgba(250, 248, 245, 0.95) 45%, rgba(250, 248, 245, 0.35) 100%), url(${priestBg})`
+          backgroundImage: `linear-gradient(to right, rgba(250, 248, 245, 1) 0%, rgba(250, 248, 245, 0.95) 45%, rgba(250, 248, 245, 0.35) 100%), url(${priestBg.src})`
         }}
       />
       
@@ -35,7 +35,7 @@ function ParishPriest() {
               />
               
               <img 
-                src={priestImg} 
+                src={priestImg.src} 
                 alt="Fr. Santhosh Lobo" 
                 className="w-full h-full object-cover rounded-xl"
               />

@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react'
 import Lenis from 'lenis'
 import Navbar from './components/Navbar'

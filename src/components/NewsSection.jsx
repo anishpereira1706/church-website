@@ -1,9 +1,32 @@
-import { useState } from 'react'
+'use client'
+
+import { useState, useEffect } from 'react'
 
 const CATEGORIES = ['News', 'Announcements', 'Blog']
 
 function NewsSection() {
   const [activeCategory, setActiveCategory] = useState('News')
+  const [announcements, setAnnouncements] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadAnnouncements() {
+      try {
+        const res = await fetch('/api/announcements')
+        const data = await res.json()
+        if (data.success) {
+          setAnnouncements(data.data)
+        }
+      } catch (error) {
+        console.error('Failed to load announcements:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadAnnouncements()
+  }, [])
+
+  const filtered = announcements.filter(ann => ann.category === activeCategory)
 
   return (
     <section id="news" className="bg-white py-24 border-t border-slate-100">
@@ -38,20 +61,64 @@ function NewsSection() {
           </div>
         </div>
 
-        {/* Coming Soon Area */}
-        <div className="text-center py-20 bg-[#faf8f5]/40 border border-brand-charcoal/5 rounded-3xl shadow-xl shadow-brand-charcoal/[0.01] flex flex-col items-center justify-center space-y-4 max-w-lg mx-auto px-6 animate-fade-in">
-          <div className="w-12 h-12 rounded-full bg-gold-gradient/10 flex items-center justify-center text-brand-orange">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
+        {/* Content Section */}
+        {isLoading ? (
+          <div className="text-center py-20">
+            <p className="text-sm text-brand-grey italic">Loading updates...</p>
           </div>
-          <h3 className="font-serif text-2xl md:text-3xl font-light text-brand-charcoal">
-            {activeCategory} <span className="font-serif italic text-gold-gradient font-bold">Coming Soon</span>
-          </h3>
-          <p className="text-brand-grey text-xs md:text-sm max-w-sm leading-relaxed">
-            We are currently compiling the latest {activeCategory.toLowerCase()} updates, files, and gallery items. Please check back shortly.
-          </p>
-        </div>
+        ) : filtered.length === 0 ? (
+          /* Coming Soon Area */
+          <div className="text-center py-20 bg-[#faf8f5]/40 border border-brand-charcoal/5 rounded-3xl shadow-xl shadow-brand-charcoal/[0.01] flex flex-col items-center justify-center space-y-4 max-w-lg mx-auto px-6 animate-fade-in">
+            <div className="w-12 h-12 rounded-full bg-gold-gradient/10 flex items-center justify-center text-brand-orange">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </div>
+            <h3 className="font-serif text-2xl md:text-3xl font-light text-brand-charcoal">
+              {activeCategory} <span className="font-serif italic text-gold-gradient font-bold">Coming Soon</span>
+            </h3>
+            <p className="text-brand-grey text-xs md:text-sm max-w-sm leading-relaxed">
+              We are currently compiling the latest {activeCategory.toLowerCase()} updates, files, and gallery items. Please check back shortly.
+            </p>
+          </div>
+        ) : (
+          /* Cards Grid */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filtered.map((item) => (
+              <div 
+                key={item._id} 
+                className="bg-white rounded-2xl overflow-hidden border border-brand-charcoal/5 shadow-xl shadow-brand-charcoal/[0.02] flex flex-col hover:scale-[1.01] transition-all duration-300"
+              >
+                {/* Poster Image Container with zoom */}
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-50 border-b border-slate-100 group">
+                  <img 
+                    src={item.imageUrl} 
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <span className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-brand-charcoal rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm border border-brand-charcoal/5">
+                    {item.category}
+                  </span>
+                </div>
+
+                {/* Card Info */}
+                <div className="p-6 flex-grow flex flex-col justify-between space-y-4">
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-bold text-brand-orange uppercase tracking-wider block">
+                      {item.date}
+                    </span>
+                    <h3 className="font-serif text-xl font-semibold text-brand-charcoal line-clamp-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-brand-grey text-xs leading-relaxed line-clamp-3">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )
