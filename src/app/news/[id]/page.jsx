@@ -68,7 +68,6 @@ export default function AnnouncementDetailPage() {
     )
   }
 
-  // Fallback for older posts that do not have a content field
   const displayContent = announcement.content || announcement.description
 
   return (
@@ -102,82 +101,115 @@ export default function AnnouncementDetailPage() {
       </AnimatePresence>
 
       {/* Nav Back Header */}
-      <header className="sticky top-0 bg-[#faf8f5]/85 backdrop-blur-md border-b border-[#1a2638]/5 z-30 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#69788e] hover:text-[#1a2638] transition-colors group cursor-pointer"
-          >
-            <ArrowLeft size={16} className="transform group-hover:-translate-x-1 transition-transform" />
-            Back to Homepage
-          </Link>
-        </div>
+      <header className="sticky top-0 bg-[#faf8f5]/85 backdrop-blur-md border-b border-[#1a2638]/5 z-30 px-8 py-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#69788e] hover:text-[#1a2638] transition-colors group cursor-pointer"
+        >
+          <ArrowLeft size={16} className="transform group-hover:-translate-x-1 transition-transform" />
+          Back to Homepage
+        </Link>
       </header>
 
-      {/* Main Layout */}
-      <main className="max-w-4xl mx-auto px-6 mt-8 space-y-12">
-        {/* Article Metadata & Header */}
-        <div className="space-y-6">
-          <div className="flex flex-wrap gap-3 items-center text-xs text-[#69788e] font-semibold">
-            <span className="flex items-center gap-1.5 px-3 py-1 bg-[#c5a059]/10 text-[#c5a059] rounded-full uppercase tracking-wider">
-              <Tag size={12} />
-              {announcement.category}
-            </span>
-            <span className="flex items-center gap-1.5 py-1 uppercase tracking-wider">
-              <Calendar size={12} />
-              {announcement.date}
-            </span>
-          </div>
+      {/* Main Full-Page Layout Container */}
+      <main className="max-w-[1400px] mx-auto px-8 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          
+          {/* Left Column: Metadata & Framed Poster (Smaller) */}
+          <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 flex flex-col items-center lg:items-stretch">
+            {/* Poster with Gold Accent Ring Frame */}
+            <div className="relative w-full max-w-[340px] aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-white p-2">
+              <div 
+                className="absolute -inset-1 rounded-2xl border-[2.5px] border-transparent -z-10"
+                style={{
+                  background: 'linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(135deg, #9e6b00, #ffea85, #d49b00, #ffea85, #9e6b00) border-box',
+                  backgroundSize: '100% 100%, 200% auto',
+                  animation: 'gold-flow 6s ease-in-out infinite'
+                }}
+              />
+              <img
+                src={getOptimizedImageUrl(announcement.imageUrl, 600)}
+                alt={announcement.title}
+                className="w-full h-full object-cover rounded-xl"
+              />
+            </div>
 
-          <h1 className="font-serif text-3xl md:text-5xl font-light leading-[1.2] text-[#1a2638]">
-            {announcement.title}
-          </h1>
-        </div>
-
-        {/* Hero Poster Image */}
-        <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden border border-slate-100 shadow-lg">
-          <img
-            src={getOptimizedImageUrl(announcement.imageUrl, 1200)}
-            alt={announcement.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        {/* Content Body */}
-        <article className="prose max-w-none text-brand-charcoal text-base md:text-lg leading-relaxed font-light space-y-6 text-[#374151]">
-          {displayContent.split('\n\n').map((paragraph, index) => (
-            <p key={index} className="white-space-pre-wrap">
-              {paragraph}
-            </p>
-          ))}
-        </article>
-
-        {/* Multi-Image Gallery */}
-        {announcement.galleryUrls && announcement.galleryUrls.length > 0 && (
-          <div className="pt-8 border-t border-slate-200 space-y-6">
-            <h2 className="font-serif text-2xl font-light text-[#1a2638] flex items-center gap-2">
-              <ImageIcon size={20} className="text-[#c5a059]" />
-              Event Gallery
-            </h2>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {announcement.galleryUrls.map((url, i) => (
-                <div
-                  key={i}
-                  onClick={() => setActiveLightboxImage(url)}
-                  className="group relative aspect-square bg-slate-100 rounded-xl overflow-hidden cursor-zoom-in border border-slate-200/50 shadow-sm"
-                >
-                  <img
-                    src={getOptimizedImageUrl(url, 400)}
-                    alt={`Gallery ${i}`}
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                </div>
-              ))}
+            {/* Meta Card */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md space-y-4 w-full max-w-[340px]">
+              <div className="flex items-center gap-2 text-xs text-[#69788e] font-semibold">
+                <span className="flex items-center gap-1.5 px-3 py-1 bg-[#c5a059]/10 text-[#c5a059] rounded-full uppercase tracking-wider">
+                  <Tag size={12} />
+                  {announcement.category}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-brand-grey font-semibold">
+                <Calendar size={14} className="text-[#c5a059]" />
+                <span className="uppercase tracking-wider">Published: {announcement.date}</span>
+              </div>
             </div>
           </div>
-        )}
+
+          {/* Right Column: Title, Content & Gallery Collage */}
+          <div className="lg:col-span-8 space-y-10">
+            <div className="space-y-4">
+              <h1 className="font-serif text-3xl md:text-5xl font-light leading-[1.2] text-[#1a2638] tracking-tight">
+                {announcement.title}
+              </h1>
+              <div className="h-[2px] w-20 bg-gradient-to-r from-[#c5a059] to-transparent" />
+            </div>
+
+            <article className="prose max-w-none text-brand-charcoal text-base md:text-lg leading-relaxed font-light space-y-6 text-[#374151]">
+              {displayContent.split('\n\n').map((paragraph, index) => (
+                <p key={index} className="white-space-pre-wrap">
+                  {paragraph}
+                </p>
+              ))}
+            </article>
+
+            {/* Asymmetric Collage Gallery */}
+            {announcement.galleryUrls && announcement.galleryUrls.length > 0 && (
+              <div className="pt-10 border-t border-slate-200 space-y-6">
+                <h2 className="font-serif text-2xl font-light text-[#1a2638] flex items-center gap-2">
+                  <ImageIcon size={20} className="text-[#c5a059]" />
+                  Event Gallery
+                </h2>
+
+                <div className="grid grid-cols-6 gap-4 auto-rows-[140px] sm:auto-rows-[180px]">
+                  {announcement.galleryUrls.map((url, i) => {
+                    // Define grid classes to build an asymmetric collage layout based on index i
+                    let gridClass = "col-span-2 row-span-1" // Default fallback
+                    if (i % 5 === 0) {
+                      gridClass = "col-span-4 row-span-2" // Large main focus
+                    } else if (i % 5 === 1) {
+                      gridClass = "col-span-2 row-span-2" // Tall side image
+                    } else if (i % 5 === 2) {
+                      gridClass = "col-span-3 row-span-1" // Wide image
+                    } else if (i % 5 === 3) {
+                      gridClass = "col-span-3 row-span-1" // Wide image
+                    } else if (i % 5 === 4) {
+                      gridClass = "col-span-6 row-span-2" // Extra wide banner
+                    }
+                    
+                    return (
+                      <div
+                        key={i}
+                        onClick={() => setActiveLightboxImage(url)}
+                        className={`group relative bg-slate-100 rounded-2xl overflow-hidden cursor-zoom-in border border-slate-200/50 shadow-sm transition-all duration-300 hover:scale-[1.01] hover:shadow-md ${gridClass}`}
+                      >
+                        <img
+                          src={getOptimizedImageUrl(url, 800)}
+                          alt={`Gallery ${i}`}
+                          className="w-full h-full object-cover transform group-hover:scale-103 transition-transform duration-700 ease-out"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </main>
     </div>
   )
