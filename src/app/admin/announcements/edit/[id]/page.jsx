@@ -32,7 +32,7 @@ export default function EditAnnouncementPage() {
   // Verify auth and fetch details
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token')
-    if (token !== 'authenticated-session-token') {
+    if (!token) {
       router.push('/admin')
       return
     }
@@ -79,6 +79,10 @@ export default function EditAnnouncementPage() {
     setExistingImageUrl('')
   }
 
+  const getAuthHeaders = () => ({
+    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+  })
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -122,6 +126,7 @@ export default function EditAnnouncementPage() {
 
       const res = await fetch(`/api/announcements?id=${id}`, {
         method: 'PUT',
+        headers: getAuthHeaders(),
         body: formData
       })
       const data = await res.json()

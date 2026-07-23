@@ -15,7 +15,7 @@ export default function ManageAnnouncementsPage() {
   // Verify auth on mount
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token')
-    if (token !== 'authenticated-session-token') {
+    if (!token) {
       router.push('/admin')
     } else {
       fetchAnnouncements()
@@ -37,12 +37,17 @@ export default function ManageAnnouncementsPage() {
     }
   }
 
+  const getAuthHeaders = () => ({
+    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+  })
+
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this announcement?')) return
 
     try {
       const res = await fetch(`/api/announcements?id=${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       })
       const data = await res.json()
       if (data.success) {

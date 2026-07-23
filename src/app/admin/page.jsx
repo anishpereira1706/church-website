@@ -15,7 +15,7 @@ export default function AdminDashboardPage() {
   // Check session token on load
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token')
-    if (token === 'authenticated-session-token') {
+    if (token) {
       setIsAuthenticated(true)
     }
   }, [])

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import dbConnect from '../../../lib/mongodb'
 import Announcement from '../../../models/Announcement'
 import cloudinary from '../../../lib/cloudinary'
+import { validateRequest } from '../../../lib/auth'
 
 /**
  * Extracts Cloudinary public_id from a secure URL.
@@ -51,6 +52,11 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  // Only authenticated admins can create posts
+  if (!validateRequest(req)) {
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 })
+  }
+
   try {
     await dbConnect()
     const formData = await req.formData()
@@ -111,6 +117,11 @@ export async function POST(req) {
 }
 
 export async function DELETE(req) {
+  // Only authenticated admins can delete posts
+  if (!validateRequest(req)) {
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 })
+  }
+
   try {
     await dbConnect()
     const { searchParams } = new URL(req.url)
@@ -159,6 +170,11 @@ export async function DELETE(req) {
 }
 
 export async function PUT(req) {
+  // Only authenticated admins can update posts
+  if (!validateRequest(req)) {
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 })
+  }
+
   try {
     await dbConnect()
     const { searchParams } = new URL(req.url)

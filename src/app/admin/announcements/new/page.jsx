@@ -25,10 +25,14 @@ export default function CreateAnnouncementPage() {
   // Verify auth on mount
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token')
-    if (token !== 'authenticated-session-token') {
+    if (!token) {
       router.push('/admin')
     }
   }, [])
+
+  const getAuthHeaders = () => ({
+    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+  })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -67,6 +71,7 @@ export default function CreateAnnouncementPage() {
 
       const res = await fetch('/api/announcements', {
         method: 'POST',
+        headers: getAuthHeaders(),
         body: formData
       })
       const data = await res.json()
