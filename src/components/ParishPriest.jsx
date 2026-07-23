@@ -1,7 +1,33 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { DEFAULT_SETTINGS } from '../lib/defaults'
 import priestImg from '../assets/Fr-Santhosh-Lobo-1-958x1198.jpg'
 import priestBg from '../assets/priest_bg.jpg'
 
 function ParishPriest() {
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS.parishPriest)
+
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const res = await fetch('/api/settings')
+        const data = await res.json()
+        if (data.success && data.data?.parishPriest) {
+          setSettings(prev => ({
+            ...prev,
+            ...data.data.parishPriest,
+          }))
+        }
+      } catch (err) {
+        console.error('Failed to load parish priest settings:', err)
+      }
+    }
+    loadSettings()
+  }, [])
+
+  const priestPhoto = settings.photoUrl || priestImg.src
+
   return (
     <section className="relative py-24 border-t border-slate-100 bg-[#faf8f5] overflow-hidden z-0">
       {/* Abstract gold/white line background with gradient fade from left to right */}
@@ -35,8 +61,8 @@ function ParishPriest() {
               />
               
               <img 
-                src={priestImg.src} 
-                alt="Fr. Santhosh Lobo" 
+                src={priestPhoto} 
+                alt={settings.name} 
                 className="w-full h-full object-cover rounded-xl"
               />
             </div>
@@ -49,22 +75,22 @@ function ParishPriest() {
                 Our Parish Priest
               </span>
               <h2 className="font-serif text-4xl md:text-5xl font-light text-brand-charcoal">
-                Fr. Santhosh Lobo
+                {settings.name}
               </h2>
             </div>
             
             <div className="relative pl-6 md:pl-8 border-l-3 border-brand-orange/40 my-8 md:my-10">
               <p className="text-brand-grey text-sm md:text-base italic font-light leading-loose font-serif text-[#4b5563]">
-                "Welcome to our parish community. Infant Mary Church stands as a beacon of faith, hope, and togetherness. Let us walk this spiritual journey hand in hand, strengthening our bonds of fellowship and service to one another."
+                {settings.message}
               </p>
             </div>
             
             <div className="pt-4 border-t border-brand-charcoal/5 max-w-[240px]">
               <p className="text-brand-charcoal font-bold text-xs tracking-wider uppercase">
-                Parish Priest
+                {settings.title}
               </p>
               <p className="text-brand-grey text-[11px] font-light">
-                Infant Mary Church, Katipalla
+                {settings.location}
               </p>
             </div>
           </div>

@@ -1,4 +1,29 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { DEFAULT_SETTINGS } from '../lib/defaults'
+
 function MassTimings() {
+  const [weekdayMasses, setWeekdayMasses] = useState(DEFAULT_SETTINGS.massTimings.weekdayMasses)
+  const [sundayMasses, setSundayMasses] = useState(DEFAULT_SETTINGS.massTimings.sundayMasses)
+
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const res = await fetch('/api/settings')
+        const data = await res.json()
+        if (data.success && data.data?.massTimings) {
+          const mt = data.data.massTimings
+          if (mt.weekdayMasses?.length) setWeekdayMasses(mt.weekdayMasses)
+          if (mt.sundayMasses?.length) setSundayMasses(mt.sundayMasses)
+        }
+      } catch (err) {
+        console.error('Failed to load mass timings:', err)
+      }
+    }
+    loadSettings()
+  }, [])
+
   return (
     <section id="timings" className="bg-[#fcfcfc] py-24 border-t border-slate-100 relative overflow-hidden">
       {/* Background decoration */}
@@ -31,35 +56,17 @@ function MassTimings() {
               </div>
               
               <div className="space-y-6">
-                <div className="space-y-1">
-                  <span className="block text-xs uppercase tracking-wider text-brand-grey">Daily Mass (Mon — Thu, Sat)</span>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-serif font-black text-brand-orange">6:45</span>
-                    <span className="text-xs font-bold text-brand-charcoal uppercase">AM</span>
-                    <span className="text-xs text-brand-grey font-medium ml-auto bg-brand-orange/10 px-2 py-0.5 rounded text-brand-orange">Konkani</span>
+                {weekdayMasses.map((mass, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <span className="block text-xs uppercase tracking-wider text-brand-grey">{mass.label}</span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-serif font-black text-brand-orange">{mass.time}</span>
+                      <span className="text-xs font-bold text-brand-charcoal uppercase">{mass.period}</span>
+                      <span className="text-xs text-brand-grey font-medium ml-auto bg-brand-orange/10 px-2 py-0.5 rounded text-brand-orange">{mass.language}</span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="block text-xs uppercase tracking-wider text-brand-grey">Friday Evening Mass</span>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-serif font-black text-brand-orange">5:30</span>
-                    <span className="text-xs font-bold text-brand-charcoal uppercase">PM</span>
-                    <span className="text-xs text-brand-grey font-medium ml-auto bg-brand-orange/10 px-2 py-0.5 rounded text-brand-orange">Konkani</span>
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="block text-xs uppercase tracking-wider text-brand-grey">Saturday Evening Mass</span>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-serif font-black text-brand-orange">5:00</span>
-                    <span className="text-xs font-bold text-brand-charcoal uppercase">PM</span>
-                    <span className="text-xs text-brand-grey font-medium ml-auto bg-brand-orange/10 px-2 py-0.5 rounded text-brand-orange">Konkani</span>
-                  </div>
-                </div>
+                ))}
               </div>
-              
-
             </div>
 
             {/* Column 2: Sunday Liturgies */}
@@ -70,37 +77,22 @@ function MassTimings() {
               </div>
               
               <div className="space-y-6">
-                <div className="space-y-1">
-                  <span className="block text-xs uppercase tracking-wider text-brand-grey">Morning Mass</span>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-serif font-black text-brand-orange">7:15</span>
-                    <span className="text-xs font-bold text-brand-charcoal uppercase">AM</span>
-                    <span className="text-xs text-brand-grey font-medium ml-auto bg-brand-orange/10 px-2 py-0.5 rounded text-brand-orange">Konkani</span>
+                {sundayMasses.map((mass, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <span className="block text-xs uppercase tracking-wider text-brand-grey">{mass.label}</span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-serif font-black text-brand-orange">{mass.time}</span>
+                      <span className="text-xs font-bold text-brand-charcoal uppercase">{mass.period}</span>
+                      <span className={`text-xs font-medium ml-auto px-2 py-0.5 rounded ${
+                        mass.language === 'Faith Study'
+                          ? 'bg-slate-100 text-slate-700'
+                          : 'bg-brand-orange/10 text-brand-orange'
+                      }`}>{mass.language}</span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="block text-xs uppercase tracking-wider text-brand-grey">Catechism Classes</span>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-serif font-black text-brand-orange">8:45</span>
-                    <span className="text-xs font-bold text-brand-charcoal uppercase">AM</span>
-                    <span className="text-xs text-brand-grey font-medium ml-auto bg-slate-100 px-2 py-0.5 rounded text-slate-700">Faith Study</span>
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="block text-xs uppercase tracking-wider text-brand-grey">Children's Mass</span>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-serif font-black text-brand-orange">10:00</span>
-                    <span className="text-xs font-bold text-brand-charcoal uppercase">AM</span>
-                    <span className="text-xs text-brand-grey font-medium ml-auto bg-brand-orange/10 px-2 py-0.5 rounded text-brand-orange">Konkani</span>
-                  </div>
-                </div>
+                ))}
               </div>
-              
-
             </div>
-
 
           </div>
         </div>
